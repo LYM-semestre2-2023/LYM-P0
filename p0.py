@@ -3,6 +3,7 @@ import re
 def check_cierre_simbolos(string_largo:str,simbolo_apertura:str, simbolo_cierre:str)->bool:
     #Esta función checkea si los simbolos están abiertos y cerrados correctamente:
     # Ej: () bien cerrado
+    # Ej: )() mal cerrado
     stack = []
     loque_retorna = True
     for i in string_largo:
