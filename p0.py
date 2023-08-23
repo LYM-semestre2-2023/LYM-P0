@@ -1,5 +1,19 @@
 import re
 
+def check_cierre_simbolos(string_largo:str,simbolo_apertura:str, simbolo_cierre:str)->bool:
+    #Esta función checkea si los simbolos están abiertos y cerrados correctamente:
+    # Ej: () bien cerrado
+    stack = []
+    loque_retorna = True
+    for i in string_largo:
+        if i == simbolo_apertura:
+            stack.append(0)
+        elif i == simbolo_cierre and len(stack)>=1:
+            stack.pop()
+        elif i == simbolo_cierre and len(stack) ==0:
+            loque_retorna = False
+    return loque_retorna
+    
 def parser(string:str)->list:
     """
     This function takes a string and returns a list of tokens.
