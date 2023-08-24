@@ -13,6 +13,8 @@ def check_cierre_simbolos(string_largo:str,simbolo_apertura:str, simbolo_cierre:
             stack.pop()
         elif i == simbolo_cierre and len(stack) ==0:
             loque_retorna = False
+    if len(stack) != 0:
+        loque_retorna = False
     return loque_retorna
     
 def parser(string:str)->list:
@@ -40,6 +42,7 @@ def parser(string:str)->list:
         if ")" in word:
             right_par=True
             word=word.replace(")","")
+        print(word)
         # Converting each word to its assigned token
 
         # Definitions
@@ -129,4 +132,28 @@ def parser(string:str)->list:
     # Return the list of tokens
     return tokens   
 
-string=""
+string="""
+defVar nom 0
+defVar x 0
+defVar y 0
+defVar one 0
+defProc putCB (c,b)
+{
+drop(c) ;
+letGo (b) ;
+walk(n)
+}
+defProc goNorth ()
+{
+while can(walk( 1,north )) { walk( 1,north) }
+}
+defProc goWest ()
+{
+if can(walk(1,west)) { walk(1,west) } else nop ()
+}
+{
+jump (3,3) ;
+putCB (2,1)
+}
+"""
+print(parser(string))
