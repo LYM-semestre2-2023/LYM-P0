@@ -45,7 +45,6 @@ def parser(string:str)->list:
         if ")" in word:
             right_par=True
             word=word.replace(")","")
-        print(word.lower())
         # Converting each word to its assigned token
 
         # Definitions
@@ -161,11 +160,13 @@ def parser(string:str)->list:
     # Return the list of tokens
     return tokens, variables, procedures
 
+
+
 string="""defVar nom 0
 defVar x 0
 defVar y 0
 defVar one 0
-defProc putCB ( c , b )
+defProc putCB (c , b)
 {
 drop ( c ) ;
 letGo ( b ) ;
@@ -173,7 +174,7 @@ walk ( n )
 }
 defProc goNorth ()
 {
-while can( walk ( 1,north )) { walk ( 1,north) }
+while can( walk ( 1,north )) { walk ( 1,north ) }
 }
 defProc goWest ()
 {
@@ -182,5 +183,115 @@ if can( walk ( 1,west )) { walk ( 1,west ) } else nop ()
 {
 jump ( 3,3 ) ;
 putCB ( 2,1 )
+}"""
+
+valido1="""
+{
+drop ( 1 ) ;
+letGo ( 2 ) ;
+walk ( 1 ) ;
+while can ( walk ( 1 , north )) {
+walk ( 1 , north );
+while can ( walk ( 1 , north )) { walk ( 1 , north )}
+}
+}
+"""
+
+valido2="""
+defProc putCB ( c , b )
+{
+drop ( c ) ;
+letGo ( b );
+walk ( 1 ) ;
+putCB ( 1,1 )
+}
+{
+jump ( 3,3 ) ;
+putCB ( 2,1 )
+}
+defProc goNorth ()
+{
+
+while can ( walk ( 1 , north )) { walk ( 1 , north ) };
+putCB ( 1,1 )
+
+}
+
+{
+jump ( 3,4 ) ;
+putCB ( 5,5 ) ;
+goNorth ()
+}
+
+defProc goWest ()
+{
+
+if can ( walk ( 1 , west ) ) { walk ( 1 , west )} else { nop () };
+goNorth () ;
+goWest () ;
+
+}
+{
+jump ( 4 ,5 ) ;
+putCB ( 6 ,7 ) ;
+goNorth () ;
+goWest () ;
+goNorth ()"""
+
+invalido1="""
+{
+drop () ;
+letGo () ;
+walk () ;
+while can ( walk ( , north )) {
+walk ( , north );
+while can ( walk ( , north )) { walk ( , north )
+}
+}
+}"""
+
+invalido2="""
+defProc putCB ( c,b )
+{
+drop ( c ) ;
+letGo ( b ) ;
+walk ( 1 ) ;
+putDC ( 1,1 )
+}
+
+{
+jump ( 3,3 ) ;
+putCB ( 2,1 )
+}
+
+defProc goNorth ()
+{
+
+while can ( walk ( 1 , north )) { walk ( 1 , north ) };
+putCB ( 1,1 )
+
+}
+
+{
+jump ( 3,4 ) ;
+putCB ( 5,5 ) ;
+goForth ()
+}
+
+defProc goWest ()
+{
+
+if can ( walk ( 1 , west ) ) { walk ( 1 , west )} else { nop () };
+goForth () ;
+goFest () ;
+
+}
+
+{
+jump ( 4,5 ) ;
+putCB ( 6,7 ) ;
+goNorth () ;
+goWest1 () ;
+goNorth1 ()
 }"""
 print(parser(string))
