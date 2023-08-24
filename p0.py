@@ -30,7 +30,7 @@ def parser(string:str)->list:
     words = re.split("\n|\t|,|\s", string) # Split the string into words
     tokens = []
     variables=[]
-    procedures=[]
+    procedures={}
     # Iterate over the string
     for word in words: 
         # Conditions to check if parenthesis are present
@@ -139,7 +139,7 @@ def parser(string:str)->list:
                 variable=False
             elif proc and word.lower()!="defproc":
                 tokens.append(word.lower())
-                procedures.append(word.lower())
+                procedures[word.lower()]=[]
                 proc=False
             elif word.lower() in variables:
                 tokens.append(word.lower())
@@ -147,7 +147,9 @@ def parser(string:str)->list:
                 tokens.append(word.lower())
             else:
                 if len(word)==1 and word.isalpha():
-                    tokens.append("param")
+                    if word.lower() not in procedures[list(procedures.keys())[-1]]:
+                        procedures[list(procedures.keys())[-1]].append(word.lower())
+                        tokens.append(word.lower())
 
         
         # Reinserting parenthesis into tokens
@@ -166,7 +168,7 @@ string="""defVar nom 0
 defVar x 0
 defVar y 0
 defVar one 0
-defProc putCB (c , b)
+defProc putCB ( c, b )
 {
 drop ( c ) ;
 letGo ( b ) ;
