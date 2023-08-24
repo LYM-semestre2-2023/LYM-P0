@@ -150,6 +150,8 @@ def parser(string:str)->list:
                     if word.lower() not in procedures[list(procedures.keys())[-1]]:
                         procedures[list(procedures.keys())[-1]].append(word.lower())
                         tokens.append(word.lower())
+                    else:
+                        tokens.append(word.lower())
 
         
         # Reinserting parenthesis into tokens
