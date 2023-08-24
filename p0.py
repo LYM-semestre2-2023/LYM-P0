@@ -21,15 +21,10 @@ def parser(string:str)->list:
     """
     # Remove all spaces from the string
     # Create a list of tokens
-    parenthesis=0 #to check if parenthesis are balanced
-    for char in string:
-        if char=="(":
-            parenthesis+=1
-        elif char==")":
-            parenthesis-=1
-    if parenthesis!=0:
-        return ["Error: Parenthesis not balanced"]
-
+    if not check_cierre_simbolos(string,"(",")"):
+        return ["Error: Falta cerrar un paréntesis"]
+    if not check_cierre_simbolos(string,"{","}"):
+        return ["Error: Falta cerrar una llave"]
     words = re.split(" |\n |\t |,", string)
     tokens = []
     # Iterate over the string
