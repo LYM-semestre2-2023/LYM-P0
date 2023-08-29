@@ -164,6 +164,34 @@ def parser(string:str)->list:
     # Return the list of tokens
     return tokens, variables, procedures
 
+def check_tokens(tokens:list, variables:list, procedures:dict)->bool:
+    while len(tokens)>0:
+        token=tokens.pop(0)
+        if token=="D":
+            if tokens.pop(0) not in variables:
+                return False
+            if tokens.pop(0)!="#":
+                return False
+        elif token=="P":
+            if tokens.pop(0) not in procedures:
+                parameters=[]
+                return False
+            else:
+                parameters=procedures[tokens.pop(0)]
+            if tokens.pop(0)!="(":
+                return False
+            while tokens.pop(0)!=")":
+                if tokens.pop(0) not in parameters:
+                    return False
+        elif token=="{":
+            if not check_tokens(tokens, variables, procedures):
+                return False
+        elif token=="}":
+            return True
+        elif token=="if":
+
+        
+
 
 
 string="""defVar nom 0
