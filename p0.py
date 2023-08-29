@@ -185,50 +185,92 @@ def check_tokens(tokens:list, variables:list, procedures:dict)->bool:
                     tokens=check_conditionals(tokens, variables, procedures)[1]     
         return True
 
-def check_definitions(tokens:list, variables:list, procedures:dict)->bool:
+def check_definitions(tokens:list, variables:list, procedures:dict)->tuple:
     token=tokens.pop(0)
     if token=="D": # If it is a variable definition
         if tokens.pop(0) not in variables:
-            return False
+            return False, tokens
         if tokens.pop(0)!="#":
-            return False
+            return False, tokens
     elif token=="P": # If it is a procedure definition
-        if tokens[0] not in procedures:
-            return False
+        if tokens.pop(0) not in procedures:
+            return False, tokens
         else:
             parameters=procedures[tokens.pop(0)]
         if tokens.pop(0)!="(":
-            return False
+            return False, tokens
         while tokens[0]!=")":
             if tokens.pop(0) not in parameters:
-                return False
+                return False, tokens
         tokens.pop(0)
         if tokens.pop(0)!="{":
-            return False
+            return False, tokens
         
         
-def check_conditionals(tokens:list, variables:list, procedures:dict)->bool:
+        
+def check_conditionals(tokens:list, variables:list, procedures:dict)->tuple:
     token=tokens.pop(0)
     if token=="if":
         if tokens.pop(0)!="can":
-            return False
+            return False, tokens
         if tokens.pop(0)!="(":
-            return False
+            return False, tokens
         if tokens.pop(0) not in variables:
-            return False
+            return False, tokens
         if tokens.pop(0)!=")":
-            return False
+            return False, tokens
         if tokens.pop(0)!="{":
-            return False
-        if not check_(tokens, variables, procedures):
-            return False
-    if token=="else":
-        if tokens.pop(0)!="{":
-            return False
-        if not check_(tokens, variables, procedures):
-            return False
+            return False, tokens
+        if not check_commands(tokens, variables, procedures)[0]:
+            return False, tokens
+        else:
+            tokens=check_commands(tokens, variables, procedures)[1]
         if tokens.pop(0)!="}":
-            return False
+            return False, tokens
+        if tokens.pop(0)=="else":
+            return False, tokens
+        if tokens.pop(0)!="{":
+            return False, tokens
+        if not check_commands(tokens, variables, procedures)[0]:
+            return False, tokens
+        else:
+            tokens=check_commands(tokens, variables, procedures)[1]
+        if tokens.pop(0)!="}":
+            return False, tokens
+        
+def check_commands (tokens, variables, procedures)->tuple:
+    token=tokens.pop(0)
+    if token=="j":
+        if tokens.pop(0)!="(":
+            return False, tokens
+        if tokens[0] not in variables or tokens[0]!="#":
+            return False, tokens
+        tokens.pop(0)
+        if tokens[0] not in variables or tokens[0]!="#":
+            return False, tokens
+        tokens.pop(0)
+        if tokens.pop(0)!=")":
+            return False, tokens
+        if tokens.pop(0) not in [";","}"]:
+            return False, tokens
+    elif token=="w":
+    
+    elif token=="l":
+    
+    elif token=="T":
+    
+    elif token=="Tt":
+    elif token=="d":
+    elif token=="g":
+    elif token=="gr":
+    elif token=="lg":
+    elif token=="nop":
+        if tokens.pop(0)!="(":
+            return False, tokens
+        if tokens.pop(0)!=")":
+            return False, tokens
+        if tokens.pop(0) not in [";","}"]:
+            return False, tokens
         
 
 
@@ -314,9 +356,9 @@ invalido1="""
 drop () ;
 letGo () ;
 walk () ;
-while can ( walk ( , north )) {
+while can ( walk ( , north ) ) {
 walk ( , north );
-while can ( walk ( , north )) { walk ( , north )
+while can ( walk ( , north ) ) { walk ( , north )
 }
 }
 }"""
@@ -338,7 +380,7 @@ putCB ( 2,1 )
 defProc goNorth ()
 {
 
-while can ( walk ( 1 , north )) { walk ( 1 , north ) };
+while can ( walk ( 1 , north ) ) { walk ( 1 , north ) };
 putCB ( 1,1 )
 
 }
@@ -352,7 +394,7 @@ goForth ()
 defProc goWest ()
 {
 
-if can ( walk ( 1 , west ) ) { walk ( 1 , west )} else { nop () };
+if can ( walk ( 1 , west ) ) { walk ( 1 , west ) } else { nop () };
 goForth () ;
 goFest () ;
 
