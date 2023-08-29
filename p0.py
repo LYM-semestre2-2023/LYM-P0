@@ -165,31 +165,70 @@ def parser(string:str)->list:
     return tokens, variables, procedures
 
 def check_tokens(tokens:list, variables:list, procedures:dict)->bool:
-    while len(tokens)>0:
-        token=tokens.pop(0)
-        if token=="D":
-            if tokens.pop(0) not in variables:
-                return False
-            if tokens.pop(0)!="#":
-                return False
-        elif token=="P":
-            if tokens.pop(0) not in procedures:
-                parameters=[]
-                return False
-            else:
-                parameters=procedures[tokens.pop(0)]
-            if tokens.pop(0)!="(":
-                return False
-            while tokens.pop(0)!=")":
-                if tokens.pop(0) not in parameters:
+        # Check if the tokens are valid
+        while len(tokens)>0:
+            token=tokens[0] # Take the first token
+            if token=="D" or token=="P": # If it is a definition
+                if not check_definitions(tokens, variables, procedures)[0]:
                     return False
-        elif token=="{":
-            if not check_tokens(tokens, variables, procedures):
-                return False
-        elif token=="}":
-            return True
-        elif token=="if":
+                else:
+                    tokens=check_definitions(tokens, variables, procedures)[1]
+            elif token in ["j","w","l","T","Tt","d","g","gr","lg","nop"]: # If it is a command
+                if not check_commands(tokens, variables, procedures)[0]:
+                    return False
+                else:
+                    tokens=check_commands(tokens, variables, procedures)[1]
+            elif token in ["if","while","repeat", "else","can","not","facing"]: # If it is a conditional
+                if not check_conditionals(tokens, variables, procedures[0]):
+                    return False
+                else:
+                    tokens=check_conditionals(tokens, variables, procedures)[1]     
+        return True
 
+def check_definitions(tokens:list, variables:list, procedures:dict)->bool:
+    token=tokens.pop(0)
+    if token=="D": # If it is a variable definition
+        if tokens.pop(0) not in variables:
+            return False
+        if tokens.pop(0)!="#":
+            return False
+    elif token=="P": # If it is a procedure definition
+        if tokens[0] not in procedures:
+            return False
+        else:
+            parameters=procedures[tokens.pop(0)]
+        if tokens.pop(0)!="(":
+            return False
+        while tokens[0]!=")":
+            if tokens.pop(0) not in parameters:
+                return False
+        tokens.pop(0)
+        if tokens.pop(0)!="{":
+            return False
+        
+        
+def check_conditionals(tokens:list, variables:list, procedures:dict)->bool:
+    token=tokens.pop(0)
+    if token=="if":
+        if tokens.pop(0)!="can":
+            return False
+        if tokens.pop(0)!="(":
+            return False
+        if tokens.pop(0) not in variables:
+            return False
+        if tokens.pop(0)!=")":
+            return False
+        if tokens.pop(0)!="{":
+            return False
+        if not check_(tokens, variables, procedures):
+            return False
+    if token=="else":
+        if tokens.pop(0)!="{":
+            return False
+        if not check_(tokens, variables, procedures):
+            return False
+        if tokens.pop(0)!="}":
+            return False
         
 
 
