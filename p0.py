@@ -19,7 +19,7 @@ def check_cierre_simbolos(string_largo:str,simbolo_apertura:str, simbolo_cierre:
 
 def agregar_espacios(string:str)-> str:
     a = string.replace("(", " ( ")
-    a = a.replace(")", " a ")
+    a = a.replace(")", " ) ")
     return a
 
     
