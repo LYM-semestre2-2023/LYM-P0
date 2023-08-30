@@ -244,6 +244,7 @@ def check_conditionals(tokens:list, variables:list, procedures:dict)->tuple:
         if tokens.pop(0)!="}":
             return False, tokens
         
+"""""
 def check_commands (tokens, variables, procedures)->tuple:
     token=tokens.pop(0)
     if token=="j":
@@ -278,7 +279,7 @@ def check_commands (tokens, variables, procedures)->tuple:
         if tokens.pop(0) not in [";","}"]:
             return False, tokens
         
-
+"""
 
 
 string="""defVar nom 0
@@ -413,4 +414,4 @@ goNorth () ;
 goWest1 () ;
 goNorth1 ()
 }"""
-print(parser(string))
+print(parser(agregar_espacios(string)))
