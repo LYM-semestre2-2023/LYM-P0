@@ -290,22 +290,24 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
         #Checkear declaracion de variables 'D'
         if tokens[i]=='D':
             if tokens[i+1] in variables:
-                if [i+2] == '#':
+                if tokens[i+2] == "#":
                     confirmacion = True
                 else:
                     confirmacion = False
-                    return confirmacion, print("Fallo en la función")
+                    print(tokens[i+2])
+                    return confirmacion, print("Fallo en la función asdf")
+                    
             else:
                 confirmacion = False
-                return confirmacion, print("Fallo en la función")
+                return confirmacion, print("Fallo en la función 2")
         #Checkear declaracion de procedimientos 'P'
         elif tokens[i]== 'P':
             if tokens[i+1] in procedures:
                 if tokens[i+2] == '(':
-                    cantidad_parametros = len(procedures[i+1])
+                    cantidad_parametros = len(procedures[tokens[i+1]])
                     if cantidad_parametros != 0:
                         for p in range(0,cantidad_parametros):
-                            if tokens[i+3+p] in procedures[i+1]:
+                            if tokens[i+3+p] in procedures[tokens[i+1]]:
                                 confirmacion = True
                             else:
                                 confirmacion = False
@@ -326,16 +328,20 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
             if tokens[i+1]=='(':
                 if len_parametros!=0:
                     for z in range(0,len_parametros):
-                        if tokens[i+2+z] =="#":
+                        if tokens[i+2+z] =="#" or tokens[i+2+z] in procedures[tokens[i]]:
                             confirmacion=True
                         else:
                             confirmacion = False
+                            print(tokens[i+2+z])
                             return confirmacion, print("El parametro que se ingresó no es númerico, no funciona")
                 if tokens[i+1+len_parametros+1] == ')':
                     confirmacion = True
                 else:
                     confirmacion = False
                     return confirmacion, print("El procedimiento no tiene un parentesis de cierre bien puesto.")
+    print("eso gonorrea, funcionó una retrochimba")
+    return confirmacion
+            
 
 string="""defVar nom 0
 defVar x 0
