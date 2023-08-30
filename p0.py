@@ -281,6 +281,61 @@ def check_commands (tokens, variables, procedures)->tuple:
         
 """
 
+#Función que checkea todo el lenguaje de una vez. FALTA agregarle más cosas
+
+def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
+    confirmacion = True
+    len_tokens = len(tokens)
+    for i in range(0,len_tokens):
+        #Checkear declaracion de variables 'D'
+        if tokens[i]=='D':
+            if tokens[i+1] in variables:
+                if [i+2] == '#':
+                    confirmacion = True
+                else:
+                    confirmacion = False
+                    return confirmacion, print("Fallo en la función")
+            else:
+                confirmacion = False
+                return confirmacion, print("Fallo en la función")
+        #Checkear declaracion de procedimientos 'P'
+        elif tokens[i]== 'P':
+            if tokens[i+1] in procedures:
+                if tokens[i+2] == '(':
+                    cantidad_parametros = len(procedures[i+1])
+                    if cantidad_parametros != 0:
+                        for p in range(0,cantidad_parametros):
+                            if tokens[i+3+p] in procedures[i+1]:
+                                confirmacion = True
+                            else:
+                                confirmacion = False
+                                return confirmacion, print("Los parametros no coinciden")
+                    if tokens[i+2+cantidad_parametros+1] == ')':
+                        confirmacion = True
+                    else:
+                        confirmacion = False
+                        return confirmacion, print("En la declación de parametros no se cierra bien el parentesis")
+                    #debido a que se está checkeando al principio que los corchetes si estén bien cerrados sabemos si esto está bien cerrado
+                else:
+                    confirmacion = False
+                    return confirmacion, print("En la declación de parametros no se cierra bien el parentesis")
+
+        #Checkear procedimientos
+        elif tokens[i] in procedures:
+            len_parametros = len(procedures[tokens[i]])
+            if tokens[i+1]=='(':
+                if len_parametros!=0:
+                    for z in range(0,len_parametros):
+                        if tokens[i+2+z] =="#":
+                            confirmacion=True
+                        else:
+                            confirmacion = False
+                            return confirmacion, print("El parametro que se ingresó no es númerico, no funciona")
+                if tokens[i+1+len_parametros+1] == ')':
+                    confirmacion = True
+                else:
+                    confirmacion = False
+                    return confirmacion, print("El procedimiento no tiene un parentesis de cierre bien puesto.")
 
 string="""defVar nom 0
 defVar x 0
