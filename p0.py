@@ -16,6 +16,12 @@ def check_cierre_simbolos(string_largo:str,simbolo_apertura:str, simbolo_cierre:
     if len(stack) != 0:
         loque_retorna = False
     return loque_retorna
+
+def agregar_espacios(string:str)-> str:
+    a = string.replace("(", " ( ")
+    a = a.replace(")", " a ")
+    return a
+
     
 def parser(string:str)->list:
     """
