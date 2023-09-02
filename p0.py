@@ -33,12 +33,13 @@ def parser(string:str)->list:
         return ["Error: Falta cerrar un paréntesis"]
     if not check_cierre_simbolos(string,"{","}"):
         return ["Error: Falta cerrar una llave"]
-    words = re.split("\n|\t|,|\s", string) # Split the string into words
+    words = re.split("\n|\t|,| ", string) # Split the string into words
     tokens = []
     variables=[]
     procedures={}
     # Iterate over the string
-    for word in words: 
+    for i in range(len(words)):
+        word=words[i] 
         # Conditions to check if parenthesis are present
         left_par=False
         right_par=False
@@ -146,18 +147,18 @@ def parser(string:str)->list:
             elif proc and word.lower()!="defproc":
                 tokens.append(word.lower())
                 procedures[word.lower()]=[]
+                j=1
+                while words[i+j]!=")":
+                    if words[i+j]!="," and words[i+j]!=" " and words[i+j]!="\n" and words[i+j]!="\t" and words[i+j]!="(" and words[i+j]!=";" and words[i+j]!="":
+                        procedures[word.lower()].append(words[i+j])
+                    j+=1
                 proc=False
             elif word.lower() in variables:
                 tokens.append(word.lower())
             elif word.lower() in procedures:
                 tokens.append(word.lower())
-            else:
-                if len(word)==1 and word.isalpha():
-                    if word.lower() not in procedures[list(procedures.keys())[-1]]:
-                        procedures[list(procedures.keys())[-1]].append(word.lower())
-                        tokens.append(word.lower())
-                    else:
-                        tokens.append(word.lower())
+            elif word.lower() in procedures[list(procedures.keys())[-1]]:
+                tokens.append(word.lower())
 
         
         # Reinserting parenthesis into tokens
