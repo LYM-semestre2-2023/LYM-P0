@@ -159,6 +159,7 @@ def parser(string:str)->list:
                 tokens.append(word.lower())
             elif word.lower() in procedures[list(procedures.keys())[-1]]:
                 tokens.append(word.lower())
+           
 
         
         # Reinserting parenthesis into tokens
@@ -283,7 +284,6 @@ def check_commands (tokens, variables, procedures)->tuple:
 """
 
 #Función que checkea todo el lenguaje de una vez. FALTA agregarle más cosas
-
 def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
     confirmacion = True
     direcciones =["N","S","E","W","F","B","L","R","A"] 
@@ -305,7 +305,7 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                 confirmacion = False
                 print("Fallo en la función 2")
                 return confirmacion
-        #Checkear declaracion de procedimientos 'P' ##¿¿ Los procedimientos siempre se declaran de primero? SI no se declaran de primero ahí si hay un problema
+        #Checkear declaracion de procedimientos 'P' 
         elif tokens[i]== 'P':
             if tokens[i+1] in procedures:
                 if tokens[i+2] == '(':
@@ -377,6 +377,7 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                 else:
                     confirmacion=False
                     print("error en el comando")
+                    return confirmacion
             else:
                 confirmacion = False
                 print("error en el comando")
@@ -502,7 +503,7 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                 return confimracion
         #check else 
         elif tokens[i] == "else":
-            if tokens[i+1] == "{":
+            if tokens[i+1] == "{" or tokens[i+1] == "nop": ##checkear si eso si está bueno
                 confirmacion = True
             else:
                 confimracion = False
@@ -528,6 +529,7 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                 return confimracion
     print("Funcionó bien")
     return confirmacion
+            
             
 ##aca para decirle a camilo que si ponga el n que está en el primer procedimiento para yo poder checkear si es variable
 string="""defVar nom 0
@@ -604,7 +606,9 @@ jump ( 4 ,5 ) ;
 putCB ( 6 ,7 ) ;
 goNorth () ;
 goWest () ;
-goNorth ()"""
+goNorth ()
+}"""
+
 
 invalido1="""
 {
@@ -662,4 +666,4 @@ goNorth () ;
 goWest1 () ;
 goNorth1 ()
 }"""
-print(parser(agregar_espacios(string)))
+print(parser(agregar_espacios(invalido1)))
