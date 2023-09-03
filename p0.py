@@ -286,6 +286,8 @@ def check_commands (tokens, variables, procedures)->tuple:
 
 def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
     confirmacion = True
+    direcciones =["N","S","E","W","F","B","L","R","A"] 
+    parametros_procedimientos = []
     len_tokens = len(tokens)
     for i in range(0,len_tokens):
         #Checkear declaracion de variables 'D'
@@ -296,12 +298,14 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                 else:
                     confirmacion = False
                     print(tokens[i+2])
-                    return confirmacion, print("Fallo en la función asdf")
+                    print("Fallo en la función.")
+                    return confirmacion
                     
             else:
                 confirmacion = False
-                return confirmacion, print("Fallo en la función 2")
-        #Checkear declaracion de procedimientos 'P'
+                print("Fallo en la función 2")
+                return confirmacion
+        #Checkear declaracion de procedimientos 'P' ##¿¿ Los procedimientos siempre se declaran de primero? SI no se declaran de primero ahí si hay un problema
         elif tokens[i]== 'P':
             if tokens[i+1] in procedures:
                 if tokens[i+2] == '(':
@@ -309,41 +313,223 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                     if cantidad_parametros != 0:
                         for p in range(0,cantidad_parametros):
                             if tokens[i+3+p] in procedures[tokens[i+1]]:
+                                parametros_procedimientos.append(tokens[i+3+p])
                                 confirmacion = True
                             else:
                                 confirmacion = False
-                                return confirmacion, print("Los parametros no coinciden")
+                                print("Los parametros no coinciden")
+                                return confirmacion
                     if tokens[i+2+cantidad_parametros+1] == ')':
                         confirmacion = True
-                    else:
+                    elif tokens[i+2+cantidad_parametros+1] != ')':
                         confirmacion = False
-                        return confirmacion, print("En la declación de parametros no se cierra bien el parentesis")
+                        print("En la declación de parametros no se cierra bien el parentesis")
+                        return confirmacion
                     #debido a que se está checkeando al principio que los corchetes si estén bien cerrados sabemos si esto está bien cerrado
+
                 else:
                     confirmacion = False
-                    return confirmacion, print("En la declación de parametros no se cierra bien el parentesis")
-
+                    print("En la declación de parametros no se abre bien el parentesis")
+                    return confirmacion
         #Checkear procedimientos
         elif tokens[i] in procedures:
             len_parametros = len(procedures[tokens[i]])
             if tokens[i+1]=='(':
                 if len_parametros!=0:
                     for z in range(0,len_parametros):
-                        if tokens[i+2+z] =="#" or tokens[i+2+z] in procedures[tokens[i]]:
+                        if tokens[i+2+z] =="#" or tokens[i+2+z] in procedures[tokens[i]] or tokens[i+2+z] in variables:
                             confirmacion=True
                         else:
                             confirmacion = False
                             print(tokens[i+2+z])
-                            return confirmacion, print("El parametro que se ingresó no es númerico, no funciona")
+                            print("El parametro que se ingresó no es númerico, no funciona")
+                            return confirmacion
                 if tokens[i+1+len_parametros+1] == ')':
                     confirmacion = True
                 else:
                     confirmacion = False
-                    return confirmacion, print("El procedimiento no tiene un parentesis de cierre bien puesto.")
-    print("eso gonorrea, funcionó una retrochimba")
+                    print("El procedimiento no tiene un parentesis de cierre bien puesto.")
+                    return confirmacion
+                
+        #Checkear walk y leap
+        elif tokens[i] in ["w","l"]:
+            if tokens[i+1] == "(":
+                if tokens[i+2] in variables or tokens[i+2]=="#":
+                    if tokens[1+3]==")":
+                        if tokens[i+4]== ";" or tokens[i+4]== "}" or tokens[i+4] ==")":
+                            confirmacion=True
+                        else:
+                            confirmacion = False
+                            print("no se cierra bien el comando")
+                            return confirmacion
+                    elif tokens[i+3] in direcciones:
+                        if tokens[i+4] == ")":
+                            if tokens[i+5]== ";" or tokens[i+5]== "}" or tokens[i+5] ==")":
+                                confirmacion=True
+                            else:
+                                confirmacion = False
+                                print("no se cierra bien el comando")
+                                return confirmacion
+                    else:
+                        confirmacion = False
+                        print("No se cierra bien el parentesis")
+                        return confirmacion
+                else:
+                    confirmacion=False
+                    print("error en el comando")
+            else:
+                confirmacion = False
+                print("error en el comando")
+                return confirmacion
+        #Checkear drop, get, grab
+        elif tokens[i] in ["d","g","gr"]:
+            if tokens[i+1] =="(":
+                if tokens[i+2] == "#" or tokens[i+2] in variables or tokens[i+2] in parametros_procedimientos:
+                    if tokens[i+3]== ")":
+                        if tokens[i+4]== ";" or tokens[i+4]== "}" or tokens[i+4] ==")":
+                            confirmacion=True
+                        else:
+                            confirmacion = False
+                            print("no se cierra bien el comando")
+                            return confirmacion
+                    else:
+                        confirmacion = False
+                        print("No cumple con las indicaciones")
+                        return confirmacion
+                else:
+                    confirmacion =False
+                    print("No cumple con las indicaciones de parametros")
+                    return confirmacion
+            else:
+                confirmacion = False
+                print("No se abre bien para el drop, get, grab")
+                return confirmacion
+        #Checkear jump
+        elif tokens[i] == "j":
+            if tokens[i+1]=="(":
+                if tokens[i+2] == "#" or tokens[i+2] in variables or parametros_procedimientos:
+                    if tokens[i+3] == "#" or tokens[i+3] in variables or parametros_procedimientos:
+                        if tokens[i+4] == ")":
+                            confirmacion = True
+                        else:
+                            confirmacion = False
+                            print("Jump no quedó bien cerrado")
+                            return confirmacion
+                    else:
+                        confirmacion = False
+                        print("Parametros de jump mal indicados")
+                        return confirmacion
+                else:
+                    confirmacion = False
+                    print("Parametros de jump mal indicados")
+                    return confirmacion 
+            else:
+                confirmacion = False
+                print("Parametros de jump mal indicados")
+                return confirmacion
+        #checkear turn, turnTO
+        elif tokens[i] in ["T", "Tt"]:
+            if tokens[i+1] == "(":
+                if tokens[i+2] in direcciones:
+                    if tokens[i+3] == ")":
+                        confirmacion = True
+                    else:
+                        confirmacion = False
+                        print("No se cierra bien el parentesis")
+                        return confirmacion
+                else:
+                    confirmacion = False
+                    print("Las indicaciones no están bien dadas")
+                    return confirmacion
+            else:
+                confirmacion = False
+                print("No se abre bien el parentesis")
+                return confirmacion
+        #Checkear nop
+        elif tokens[i] == "nop":
+            if tokens[i+1] == "(":
+                if tokens[i+2] ==")":
+                    confirmacion = True
+                else:
+                    confirmacion = False
+                    print("Parentesis mal cerrado")
+                    return confirmacion
+            else:
+                confirmacion = False
+                print("Parentesis mal abierto")
+                return confirmacion
+
+        #Checkear while
+        elif tokens[i]== "while":
+            if tokens[i+1] == "can" or tokens[i+1]=="facing":
+                if tokens[i+2]  =="(":
+                    confirmacion = True
+                else:
+                    confirmacion = False
+                    print("No se abre bien el parentesis")
+                    return confirmacion
+            elif tokens[i+1]=="not":
+                if tokens[i+2] in ["can","facing"]:
+                    if tokens[i+3] =="(":
+                        confirmacion = True
+                    elif tokens[i+2]=="not":
+                        confimracion = True
+                    else:
+                        confirmacion = False
+                        print("While mal escrito")
+                        return confirmacion
+        #checkear can
+        elif tokens[i] == "can":
+            if tokens[i+1] == "(":
+                if tokens[i+2] in ["j","w","l","T","Tt","d","g", "gr","lg","nop"]:
+                    confirmacion = True
+                else:
+                    confirmacion = False
+                    print("Can mal escrito")
+                    return confirmacion
+            else:
+                confirmacion = False
+                print("Can mal escrito")
+                return confirmacion
+            
+        #checkear if
+        elif tokens[i] == "if":
+            if tokens[i+1] in ["can", "facing", "not"]:
+                confimracion=True
+            else:
+                confimracion = False
+                print("if statement mal hecho")
+                return confimracion
+        #check else 
+        elif tokens[i] == "else":
+            if tokens[i+1] == "{":
+                confirmacion = True
+            else:
+                confimracion = False
+                print("Error en el else statement")
+                return confirmacion
+        #check repeat
+        elif tokens[i] == "repeat":
+            if tokens[i+1] in variables or tokens[i+1] == "#":
+                if tokens[i+2] =="times":
+                    if tokens[i+3] =="{":
+                        confirmacion = True
+                    else:
+                        confimracion = False
+                        print("Repeat mal hecho")
+                        return confirmacion
+                else:
+                    confirmacion = False
+                    print("Repeat mal hecho")
+                    return confirmacion
+            else:
+                confimracion = False
+                print("repeat mal hecho")
+                return confimracion
+    print("Funcionó bien")
     return confirmacion
             
-
+##aca para decirle a camilo que si ponga el n que está en el primer procedimiento para yo poder checkear si es variable
 string="""defVar nom 0
 defVar x 0
 defVar y 0
