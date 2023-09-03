@@ -668,5 +668,5 @@ goNorth () ;
 goWest1 () ;
 goNorth1 ()
 }"""
-string_a_mirar=invalido1
+string_a_mirar=valido2
 print(parser(agregar_espacios(string_a_mirar)), check_lenguage(parser(agregar_espacios(string_a_mirar))[0],parser(agregar_espacios(string_a_mirar))[1],parser(agregar_espacios(string_a_mirar))[2]))
