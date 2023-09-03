@@ -20,6 +20,8 @@ def check_cierre_simbolos(string_largo:str,simbolo_apertura:str, simbolo_cierre:
 def agregar_espacios(string:str)-> str:
     a = string.replace("(", " ( ")
     a = a.replace(")", " ) ")
+    a = a.replace("{", " { ")
+    a = a.replace("}", " } ")
     return a
 
     
@@ -44,7 +46,9 @@ def parser(string:str)->list:
         left_par=False
         right_par=False
         
-
+        #Eliminating empty words
+        if word==" " or word=="" or word=="\n" or word=="\t":
+            continue
         # Elmiminating parenthesis from the word
         if "(" in word:
             left_par=True
@@ -56,10 +60,8 @@ def parser(string:str)->list:
 
         # Definitions
         if word.lower() == "defvar":
-            variable=True
             tokens.append("D")
         elif word.lower() == "defproc":
-            proc=True
             tokens.append("P")
         elif word=="{":
             tokens.append("{")
@@ -140,11 +142,11 @@ def parser(string:str)->list:
         
         # Names
         else:
-            if variable and word.lower()!="defvar":
+
+            if words[i-1].lower()=="defvar":
                 tokens.append(word.lower())
                 variables.append(word.lower())
-                variable=False
-            elif proc and word.lower()!="defproc":
+            elif words[i-1].lower()=="defproc":
                 tokens.append(word.lower())
                 procedures[word.lower()]=[]
                 j=1
@@ -152,13 +154,13 @@ def parser(string:str)->list:
                     if words[i+j]!="," and words[i+j]!=" " and words[i+j]!="\n" and words[i+j]!="\t" and words[i+j]!="(" and words[i+j]!=";" and words[i+j]!="":
                         procedures[word.lower()].append(words[i+j])
                     j+=1
-                proc=False
             elif word.lower() in variables:
                 tokens.append(word.lower())
             elif word.lower() in procedures:
                 tokens.append(word.lower())
-            elif word.lower() in procedures[list(procedures.keys())[-1]]:
-                tokens.append(word.lower())
+            if len(procedures)>0:
+                if word.lower() in procedures[list(procedures.keys())[-1]]:
+                    tokens.append(word.lower())
            
 
         
@@ -596,7 +598,7 @@ goNorth ()
 defProc goWest ()
 {
 
-if can ( walk ( 1 , west ) ) { walk ( 1 , west )} else { nop () };
+if can ( walk ( 1 , west ) ) { walk ( 1 , west )} else { nop () } ;
 goNorth () ;
 goWest () ;
 
@@ -653,7 +655,7 @@ goForth ()
 defProc goWest ()
 {
 
-if can ( walk ( 1 , west ) ) { walk ( 1 , west ) } else { nop () };
+if can ( walk ( 1 , west ) ) { walk ( 1 , west ) } else { nop () } ;
 goForth () ;
 goFest () ;
 
@@ -666,4 +668,5 @@ goNorth () ;
 goWest1 () ;
 goNorth1 ()
 }"""
-print(parser(agregar_espacios(invalido1)))
+string_a_mirar=invalido1
+print(parser(agregar_espacios(string_a_mirar)), check_lenguage(parser(agregar_espacios(string_a_mirar))[0],parser(agregar_espacios(string_a_mirar))[1],parser(agregar_espacios(string_a_mirar))[2]))
