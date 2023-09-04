@@ -148,6 +148,7 @@ def parser(string:str)->list:
                 variables.append(word.lower())
             elif words[i-1].lower()=="defproc":
                 tokens.append(word.lower())
+
                 procedures[word.lower()]=[]
                 j=1
                 while words[i+j]!=")":
@@ -307,7 +308,7 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                 confirmacion = False
                 print("Fallo en la función 2")
                 return confirmacion
-        #Checkear declaracion de procedimientos 'P' 
+        #Checkear declaracion de procedimientos 'P' ##¿¿ Los procedimientos siempre se declaran de primero? SI no se declaran de primero ahí si hay un problema
         elif tokens[i]== 'P':
             if tokens[i+1] in procedures:
                 if tokens[i+2] == '(':
@@ -325,7 +326,7 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                         confirmacion = True
                     elif tokens[i+2+cantidad_parametros+1] != ')':
                         confirmacion = False
-                        print("En la declación de parametros no se cierra bien el parentesis")
+                        print("En la declación de parametros no se cierra bien el parentesis0")
                         return confirmacion
                     #debido a que se está checkeando al principio que los corchetes si estén bien cerrados sabemos si esto está bien cerrado
 
@@ -357,7 +358,7 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
         elif tokens[i] in ["w","l"]:
             if tokens[i+1] == "(":
                 if tokens[i+2] in variables or tokens[i+2]=="#":
-                    if tokens[1+3]==")":
+                    if tokens[i+3]==")":
                         if tokens[i+4]== ";" or tokens[i+4]== "}" or tokens[i+4] ==")":
                             confirmacion=True
                         else:
@@ -374,14 +375,19 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                                 return confirmacion
                     else:
                         confirmacion = False
-                        print("No se cierra bien el parentesis")
+                        print(tokens[i+3])
+                        print("No se cierra bien el parentesis1")
                         return confirmacion
                 else:
                     confirmacion=False
+                    print(i+1)
+                    print(tokens[i+2])
                     print("error en el comando")
                     return confirmacion
             else:
                 confirmacion = False
+                print(i+1)
+                print(tokens[i+1])
                 print("error en el comando")
                 return confirmacion
         #Checkear drop, get, grab
@@ -438,7 +444,8 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                         confirmacion = True
                     else:
                         confirmacion = False
-                        print("No se cierra bien el parentesis")
+                        print(tokens[i+3])
+                        print("No se cierra bien el parentesis2")
                         return confirmacion
                 else:
                     confirmacion = False
@@ -529,8 +536,19 @@ def check_lenguage(tokens:list, variables:list, procedures:dict)->bool:
                 confimracion = False
                 print("repeat mal hecho")
                 return confimracion
+        elif tokens[i] =="(":
+            if tokens[i-1] in ["j","w","l","T","Tt","d","g", "gr","lg","nop", "can"] or tokens[i-1] in procedures or tokens[i-1] in parametros_procedimientos:
+                confirmacion=True
+            else:
+                confirmacion = False
+                print(tokens[i])
+                print(tokens[i-1])
+                print("No está definido bien bien bien")
+                return confirmacion
+        
     print("Funcionó bien")
     return confirmacion
+            
             
             
 ##aca para decirle a camilo que si ponga el n que está en el primer procedimiento para yo poder checkear si es variable
@@ -668,5 +686,5 @@ goNorth () ;
 goWest1 () ;
 goNorth1 ()
 }"""
-string_a_mirar=valido2
+string_a_mirar=string
 print(parser(agregar_espacios(string_a_mirar)), check_lenguage(parser(agregar_espacios(string_a_mirar))[0],parser(agregar_espacios(string_a_mirar))[1],parser(agregar_espacios(string_a_mirar))[2]))
